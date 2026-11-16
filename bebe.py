@@ -10,7 +10,9 @@ fonction lire le type et retourner le message
 
 """
 def fmt_read(fmt) :
-    """prend le format retourne une liste contenant les details du format(type, longeur, contenu) dans l'odre
+    """
+        pre : prend le format sous forme de chaine de carractère
+        post :retourne une liste contenant les details du format(type, longeur, contenu) dans l'odre
     dans le quel est venu le format
     """
     lst = []
