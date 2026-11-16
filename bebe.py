@@ -1,5 +1,5 @@
-
-def fonction(T,V):
+# Imports go at the top
+def formatting(T,V):
     return str(T) + "|" + str(len(str(V))) + "|" + str(V)
 
 #A faire :
@@ -34,8 +34,6 @@ radio.config(group=1)
 while True:
     if button_a.was_pressed():
         type_msg = "0x03" 
-        contenu = "1234:TEST" 
-        longueur = len(contenu)
-        msg_tlv = str(type_msg) + "|" + str(longueur) + "|" + contenu
+        msg_tlv = formatting(type_msg, contenu)  # David a minimiser le code en appelant la fonction formatting
         radio.send(msg_tlv)
         display.show(Image.YES)
