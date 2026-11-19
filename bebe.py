@@ -1,9 +1,10 @@
-<<<<<<< HEAD
+from microbit import *
+import radio
+radio.on()
+radio.config(group=1)
+
 def fonction(T,V):
-=======
-# Imports go at the top
 def formatting(T,V):
->>>>>>> d150dc2b0ed409c18bc002a31880323e9e21c401
     return str(T) + "|" + str(len(str(V))) + "|" + str(V)
 
 #A faire :
@@ -31,10 +32,7 @@ def fmt_read(fmt) :
             crt = ""
     return lst
 
-from microbit import *
-import radio
-radio.on()
-radio.config(group=1)
+
 while True:
     if button_a.was_pressed():
         type_msg = "0x03" 
