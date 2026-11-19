@@ -1,4 +1,3 @@
-
 def fonction(T,V):
     return str(T) + "|" + str(len(str(V))) + "|" + str(V)
 
@@ -39,3 +38,5 @@ while True:
         msg_tlv = str(type_msg) + "|" + str(longueur) + "|" + contenu
         radio.send(msg_tlv)
         display.show(Image.YES)
+        sleep(500)
+        display.clear()
