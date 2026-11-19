@@ -1,7 +1,7 @@
 from microbit import *
 import radio
 radio.on()
-radio.config(group=23)
+radio.config(group=1)
 while True:
     message_recu =radio.receive()
     
