@@ -25,10 +25,53 @@ def fmt_read(fmt) :
             crt = ""
     return lst
 
+def surveiller_bebe(compteur, ancien_etat):
+    # 1. 7sab l'ampleur
+    x = accelerometer.get_x()
+    y = accelerometer.get_y()
+    z = accelerometer.get_z()
+    ampleur = abs(((x**2 + y**2 + z**2) ** 0.5) - 1000)
+    if ampleur > 700:
+        compteur += 3
+    elif ampleur > 250:
+        compteur += 1
+    elif compteur > 0:
+        compteur -= 1
+
+    if compteur > 35:
+        compteur = 35
+
+    if accelerometer.was_gesture("freefall"):
+        compteur =35
+        etat = "TRES_AGITE"
+    elif compteur >= 25:
+        etat ="TRES_AGITE"
+    elif compteur >= 10:
+        etat ="AGITE"
+    else:
+        etat ="ENDORMI"
+
+    if etat != ancien_etat:
+        radio.send(formatting("0x03", etat))
+        if etat =="ENDORMI":
+            music.stop()
+            display.clear()
+        elif etat =="AGITE":
+            display.show(Image.HEART)
+            music.play(["C4:4", "E4:4", "G4:4", "E4:4"], wait=False)
+        elif etat =="TRES_AGITE":
+            display.show(Image.HAPPY)
+            music.play(music.ODE, wait=False)
+
+    return compteur, etat
+compteur = 0
+ancien_etat = ""
 
 
+    
 while True:
 
+    compteur, ancien_etat = surveiller_bebe(compteur, ancien_etat)
     if button_a.was_pressed():
         type_msg = "0x03" 
         contenu="1234:TEST"
