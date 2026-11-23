@@ -33,6 +33,19 @@ def fmt_read(fmt) :
     return lst
 
 
+def fmt_write(lst) :
+    """
+        pre : prend en paramètre la liste 'lst'.
+        post : Reconstruit le message sous le format de base.
+    """
+    msg = ""
+    for i in range(len(lst) - 1) :
+        msg += str(i) + "|"  
+    msg += str(lst[len(lst) - 1])
+    
+    return msg
+
+
 while True:
     if button_a.was_pressed():
         type_msg = "0x03" 

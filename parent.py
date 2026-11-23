@@ -81,10 +81,6 @@ def retour_menu():
 
 
 # Démarre éteint (en attente d'un appui sur A) 
-allume = False
-en_app = False
-display.off()
-
 while True:
     if not allume:
         if button_a.was_pressed():
