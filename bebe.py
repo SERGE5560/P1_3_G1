@@ -19,7 +19,7 @@ def fmt_write(lst) :
     """
     msg = ""
     for i in range(len(lst) - 1) :
-        msg += str(i) + "|"  
+        msg += str(lst[i]) + "|"  
     msg += str(lst[len(lst) - 1])
     
     return msg
@@ -101,7 +101,6 @@ ancien_etat = ""
 
 
     
->>>>>>> f3d0366808b7a7bf0e803321fd281f84436ace93
 while True:
 
     compteur, ancien_etat = surveiller_bebe(compteur, ancien_etat)
