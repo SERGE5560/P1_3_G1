@@ -2,6 +2,9 @@ from microbit import *
 import radio
 import random
 import music
+=======================
+Connection Radio
+========================
 radio.on()
 radio.config(group=1)
 
@@ -152,6 +155,37 @@ def vigenere(message, key, decryption=False):
         else:
             text += char
     return text
+
+def fmt_packet(lst) :
+    """
+        pre : prend en paramètre la liste 'lst'.
+        post : Reconstruit le message sous le format de base.
+    """
+    msg = ""
+    for i in range(len(lst)-1) :
+        msg += str(lst[i]) + "|"  
+    msg += str(lst[len(lst) - 1])
+    
+    return msg
+
+
+def fmt_read(fmt) :
+    """
+        pre : prend le format sous forme de chaine de carractère
+        post :retourne une liste contenant les details du format(type, longeur, contenu) dans l'odre
+        dans le quel est venu le format
+    """
+    lst = []
+    crt = ""
+    fmt1 = str(fmt) + "|"
+    for i in fmt1 :
+        if i != "|" :
+            crt = crt + i
+        else :
+            lst.append(crt)
+            crt = ""
+    return lst
+
     
 def send_packet(key, type, content):
     """
@@ -163,6 +197,16 @@ def send_packet(key, type, content):
            (str) content:   Données à envoyer
 	:return none
     """
+    lst =[str(type),len(content), content]
+    
+    currentkey = key
+    
+    message = fmt_packet(lst)
+    
+    radio.send(message)
+    
+    
+    
 
 #Unpack the packet, check the validity and return the type, length and content
 def unpack_data(encrypted_packet, key):
