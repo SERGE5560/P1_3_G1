@@ -8,20 +8,26 @@ radio.config(group=1)
 compteur = 0
 ancien_etat = ""
 
-
-##		MINI OS
-
-options = ["1=OFf", "2=T", "3=H"]
-index = 0
-allume = False
-en_app = False
-
+=======================
+Connection Radio
+========================
+radio.on()
+radio.config(group=1)
 connexion_established = False
 key = "KEYWORD"
 connexion_key = None
 nonce_list = set()
 baby_state = 0
 set_volume(100)
+
+
+##		MINI OS
+
+#		Variables du menu
+options = ["1=OFf", "2=T", "3=H"]
+index = 0
+allume = False
+en_app = False
 
 
 
@@ -128,46 +134,6 @@ def retour_menu():
     afficher_menu()
 
 
-##		ORIENTE CONNECTION
-
-def formatting(T,V):
-    """
-    pre: fonction format
-    post: fonction lire le type et retourner le message
-    """
-    return str(T) + "|" + str(len(str(V))) + "|" + str(V)
-
-
-def fmt_write(lst) :
-    """
-        pre : prend en paramètre la liste 'lst'.
-        post : Reconstruit le message sous le format de base.
-    """
-    msg = ""
-    for i in range(len(lst) - 1) :
-        msg += str(lst[i]) + "|"  
-    msg += str(lst[len(lst) - 1])
-    
-    return msg
-
-
-def fmt_read(fmt) :
-    """
-        pre : prend le format sous forme de chaine de carractère
-        post :retourne une liste contenant les details du format(type, longeur, contenu) dans l'odre
-        dans le quel est venu le format
-    """
-    lst = []
-    crt = ""
-    fmt1 = str(fmt) + "|"
-    for i in fmt1 :
-        if i != "|" :
-            crt = crt + i
-        else :
-            lst.append(crt)
-            crt = ""
-    return lst
-
 ##		LES OPTIONS
 
 def surveiller_bebe(compteur, ancien_etat):
@@ -205,19 +171,33 @@ def surveiller_bebe(compteur, ancien_etat):
             music.play(music.ODE, wait=False)
     return compteur, etat
 
-##		DEDIE CONNEXION
+##		DEDIEE CONNEXION
 
-def fmt_write(lst) :
+def formatting(T,V):
     """
-        pre : prend en paramètre la liste 'lst'.
-        post : Reconstruit le message sous le format de base.
+    pre: fonction format
+    post: fonction lire le type et retourner le message
     """
-    msg = ""
-    for i in range(len(lst) - 1) :
-        msg += str(i) + "|"  
-    msg += str(lst[len(lst) - 1])
-    
-    return msg
+    return str(T) + "|" + str(len(str(V))) + "|" + str(V)
+
+
+def fmt_read(fmt) :
+    """
+        pre : prend le format sous forme de chaine de carractère
+        post :retourne une liste contenant les details du format(type, longeur, contenu) dans l'odre
+        dans le quel est venu le format
+    """
+    lst = []
+    crt = ""
+    fmt1 = str(fmt) + "|"
+    for i in fmt1 :
+        if i != "|" :
+            crt = crt + i
+        else :
+            lst.append(crt)
+            crt = ""
+    return lst
+
 
 def fmt_write(lst) :
     """
@@ -233,6 +213,63 @@ compteur = 0
 ancien_etat = ""
     
     return msg
+
+def unpack_data(encrypted_packet, key):
+    """
+    Déballe et déchiffre les paquets reçus via l'interface radio du micro:bit
+    Cette fonction renvoit les différents champs du message passé en paramètre
+
+    :param (str) encrypted_packet: Paquet reçu
+           (str) key:              Clé de chiffrement
+	:return (srt)type:             Type de paquet
+            (int)length:           Longueur de la donnée en caractères
+            (str) message:         Données reçue
+    """
+    packet = vignere(encrypted_packet, key, True)
+    packet_split = packet.split("|")
+    
+    typ = packet_split[0]
+    length = packet_split[1]
+    message = packet_split[2]
+    
+    return typ, length, message
+
+def receive_packet(packet_received, key):
+    """
+    Traite les paquets reçus via l'interface radio du micro:bit
+    Cette fonction utilise la fonction unpack_data pour renvoyer les différents champs du message passé en paramètre
+    Si une erreur survient, les 3 champs sont retournés vides
+
+    :param (str) packet_received: Paquet reçue
+           (str) key:              Clé de chiffrement
+	:return (srt)type:             Type de paquet
+            (int)lenght:           Longueur de la donnée en caractère
+            (str) message:         Données reçue
+    """
+
+    return unpack_data(packet_received, key)
+
+
+#Calculate the challenge response
+def calculate_challenge_response(challenge):
+    """
+    Calcule la réponse au challenge initial de connection envoyé par l'autre micro:bit
+
+    :param (str) challenge:            Challenge reçu
+	:return (srt)challenge_response:   Réponse au challenge
+    """
+
+def establish_connexion(key):
+    """
+    Etablissement de la connexion avec l'autre micro:bit
+    Si il y a une erreur, la valeur de retour est vide
+
+    :param (str) key:                  Clé de chiffrement
+	:return (srt)challenge_response:   Réponse au challenge
+    """
+
+
+
 
 
 ##		EXECUTION FINALE
