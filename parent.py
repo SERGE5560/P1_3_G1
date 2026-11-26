@@ -50,7 +50,6 @@ def allumer():
     sleep(2000)
     afficher_menu()
 
-
 def eteindre():
     global allume, en_app
     if allume:
@@ -220,7 +219,6 @@ def unpack_data(encrypted_packet, key):
             (int)length:           Longueur de la donnée en caractères
             (str) message:         Données reçue
     """
-
 def receive_packet(packet_received, key):
     """
     Traite les paquets reçus via l'interface radio du micro:bit
@@ -233,6 +231,7 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
+    return unpack_data(packet_received, key)
 
 #Calculate the challenge response
 def calculate_challenge_response(challenge):
@@ -275,10 +274,24 @@ while True:
 
     sleep(50)
 
-
-
 # Fin mini os
 
+def gerer_lait(doses_lait):
+    if button_a.is_pressed() and button_b.is_pressed():
+        if doses_lait > 0:
+            doses_lait -= 1
+        display.show(str(doses_lait))
+        button_a.was_pressed()  
+        button_b.was_pressed()
+        sleep(500)
+    elif button_a.was_pressed():
+        doses_lait += 1
+        display.show(str(doses_lait))
+    elif button_b.was_pressed():
+        doses_lait = True
+        display.show(str(doses_lait))
+    return doses_lait
+doses_lait = 0
 """
 while True:
     doses_lait = gerer_lait(doses_lait)

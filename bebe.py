@@ -168,10 +168,12 @@ def fmt_read(fmt) :
             crt = ""
     return lst
 
+<<<<<<< HEAD
 ##		LES OPTIONS
+=======
+>>>>>>> e03687cd0f9316ba99fb1fd71de361908e5dd917
 
 def surveiller_bebe(compteur, ancien_etat):
-    # 1. 7sab l'ampleur
     x = accelerometer.get_x()
     y = accelerometer.get_y()
     z = accelerometer.get_z()
@@ -182,34 +184,11 @@ def surveiller_bebe(compteur, ancien_etat):
         compteur += 1
     elif compteur > 0:
         compteur -= 1
-    if compteur > 35:
-        compteur = 35
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
 
-    if accelerometer.was_gesture("freefall"):
-        compteur =35
-        etat = "TRES_AGITE"
-    elif compteur >= 25:
-        etat ="TRES_AGITE"
-    elif compteur >= 10:
-        etat ="AGITE"
-    else:
-        etat ="ENDORMI"
-
-    if etat != ancien_etat:
-        radio.send(formatting("0x03", etat))
-        if etat =="ENDORMI":
-            music.stop()
-            display.clear()
-        elif etat =="AGITE":
-            display.show(Image.HEART)
-            music.play(["C4:4", "E4:4", "G4:4", "E4:4"], wait=False)
-        elif etat =="TRES_AGITE":
-            display.show(Image.HAPPY)
-            music.play(music.ODE, wait=False)
-
-    return compteur, etat
-
-
+<<<<<<< HEAD
 def fmt_write(lst) :
     """
         pre : prend en paramètre la liste 'lst'.
@@ -223,8 +202,56 @@ def fmt_write(lst) :
     return msg
 
 
+=======
+=======
+>>>>>>> Stashed changes
+>>>>>>> e03687cd0f9316ba99fb1fd71de361908e5dd917
+    if compteur > 35:
+        compteur = 35
+    if accelerometer.was_gesture("freefall"):
+        compteur =35
+        etat = "TRES_AGITE"
+    elif compteur >= 25:
+        etat ="TRES_AGITE"
+    elif compteur >= 10:
+        etat ="AGITE"
+    else:
+        etat ="ENDORMI"
+    if etat != ancien_etat:
+        radio.send(formatting("0x03", etat))
+        if etat =="ENDORMI":
+            music.stop()
+            display.clear()
+        elif etat =="AGITE":
+            display.show(Image.HEART)
+            music.play(["C4:4", "E4:4", "G4:4", "E4:4"], wait=False)
+        elif etat =="TRES_AGITE":
+            display.show(Image.HAPPY)
+            music.play(music.ODE, wait=False)
+    return compteur, etat
+<<<<<<< HEAD
+
+
+def fmt_write(lst) :
+    """
+        pre : prend en paramètre la liste 'lst'.
+        post : Reconstruit le message sous le format de base.
+    """
+    msg = ""
+    for i in range(len(lst) - 1) :
+        msg += str(i) + "|"  
+    msg += str(lst[len(lst) - 1])
+=======
+compteur = 0
+ancien_etat = ""
+>>>>>>> e03687cd0f9316ba99fb1fd71de361908e5dd917
+    
+    return msg
+
+
 ##		EXECUTION FINALE
 while True:
+<<<<<<< Updated upstream
     
 # Démarre éteint (en attente d'un appui sur A)
     if not allume:
@@ -245,6 +272,8 @@ while True:
     sleep(50)
     
 
+=======
+>>>>>>> Stashed changes
     compteur, ancien_etat = surveiller_bebe(compteur, ancien_etat)
     if button_a.was_pressed():
         type_msg = "0x03" 
