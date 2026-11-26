@@ -168,10 +168,7 @@ def fmt_read(fmt) :
             crt = ""
     return lst
 
-<<<<<<< HEAD
 ##		LES OPTIONS
-=======
->>>>>>> e03687cd0f9316ba99fb1fd71de361908e5dd917
 
 def surveiller_bebe(compteur, ancien_etat):
     x = accelerometer.get_x()
@@ -184,28 +181,6 @@ def surveiller_bebe(compteur, ancien_etat):
         compteur += 1
     elif compteur > 0:
         compteur -= 1
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-
-<<<<<<< HEAD
-def fmt_write(lst) :
-    """
-        pre : prend en paramètre la liste 'lst'.
-        post : Reconstruit le message sous le format de base.
-    """
-    msg = ""
-    for i in range(len(lst) - 1) :
-        msg += str(i) + "|"  
-    msg += str(lst[len(lst) - 1])
-    
-    return msg
-
-
-=======
-=======
->>>>>>> Stashed changes
->>>>>>> e03687cd0f9316ba99fb1fd71de361908e5dd917
     if compteur > 35:
         compteur = 35
     if accelerometer.was_gesture("freefall"):
@@ -229,8 +204,8 @@ def fmt_write(lst) :
             display.show(Image.HAPPY)
             music.play(music.ODE, wait=False)
     return compteur, etat
-<<<<<<< HEAD
 
+##		DEDIE CONNEXION
 
 def fmt_write(lst) :
     """
@@ -241,17 +216,27 @@ def fmt_write(lst) :
     for i in range(len(lst) - 1) :
         msg += str(i) + "|"  
     msg += str(lst[len(lst) - 1])
-=======
+    
+    return msg
+
+def fmt_write(lst) :
+    """
+        pre : prend en paramètre la liste 'lst'.
+        post : Reconstruit le message sous le format de base.
+    """
+    msg = ""
+    for i in range(len(lst) - 1) :
+        msg += str(i) + "|"  
+    msg += str(lst[len(lst) - 1])
+
 compteur = 0
 ancien_etat = ""
->>>>>>> e03687cd0f9316ba99fb1fd71de361908e5dd917
     
     return msg
 
 
 ##		EXECUTION FINALE
 while True:
-<<<<<<< Updated upstream
     
 # Démarre éteint (en attente d'un appui sur A)
     if not allume:
@@ -272,8 +257,6 @@ while True:
     sleep(50)
     
 
-=======
->>>>>>> Stashed changes
     compteur, ancien_etat = surveiller_bebe(compteur, ancien_etat)
     if button_a.was_pressed():
         type_msg = "0x03" 
