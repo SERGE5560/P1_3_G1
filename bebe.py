@@ -126,8 +126,8 @@ def fmt_read(fmt) :
             crt = ""
     return lst
 
+
 def surveiller_bebe(compteur, ancien_etat):
-    # 1. 7sab l'ampleur
     x = accelerometer.get_x()
     y = accelerometer.get_y()
     z = accelerometer.get_z()
@@ -138,6 +138,7 @@ def surveiller_bebe(compteur, ancien_etat):
         compteur += 1
     elif compteur > 0:
         compteur -= 1
+<<<<<<< Updated upstream
 
 <<<<<<< HEAD
 def fmt_write(lst) :
@@ -154,9 +155,10 @@ def fmt_write(lst) :
 
 
 =======
+=======
+>>>>>>> Stashed changes
     if compteur > 35:
         compteur = 35
-
     if accelerometer.was_gesture("freefall"):
         compteur =35
         etat = "TRES_AGITE"
@@ -166,7 +168,6 @@ def fmt_write(lst) :
         etat ="AGITE"
     else:
         etat ="ENDORMI"
-
     if etat != ancien_etat:
         radio.send(formatting("0x03", etat))
         if etat =="ENDORMI":
@@ -178,14 +179,12 @@ def fmt_write(lst) :
         elif etat =="TRES_AGITE":
             display.show(Image.HAPPY)
             music.play(music.ODE, wait=False)
-
     return compteur, etat
 compteur = 0
 ancien_etat = ""
-
-
     
 while True:
+<<<<<<< Updated upstream
     
 # Démarre éteint (en attente d'un appui sur A)
     if not allume:
@@ -206,6 +205,8 @@ while True:
     sleep(50)
     
 
+=======
+>>>>>>> Stashed changes
     compteur, ancien_etat = surveiller_bebe(compteur, ancien_etat)
     if button_a.was_pressed():
         type_msg = "0x03" 
