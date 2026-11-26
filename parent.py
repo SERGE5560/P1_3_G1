@@ -155,7 +155,6 @@ def vigenere(message, key, decryption=False):
             text += char
     return text
 
-<<<<<<< Updated upstream
 def fmt_packet(lst) :
     """
         pre : prend en paramètre la liste 'lst'.
@@ -187,8 +186,6 @@ def fmt_read(fmt) :
     return lst
 
     
-=======
->>>>>>> Stashed changes
 def send_packet(key, type, content):
     """
     Envoi de données fournies en paramètres
@@ -199,7 +196,6 @@ def send_packet(key, type, content):
            (str) content:   Données à envoyer
 	:return none
     """
-<<<<<<< Updated upstream
     lst =[str(type),len(content), content]
     
     currentkey = key
@@ -211,8 +207,6 @@ def send_packet(key, type, content):
     
     
 
-=======
->>>>>>> Stashed changes
 #Unpack the packet, check the validity and return the type, length and content
 def unpack_data(encrypted_packet, key):
     """
