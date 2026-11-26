@@ -246,8 +246,13 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
-
-    return unpack_data(packet_received, key)
+    try:
+       packet = unpack_data(packet_received, key)
+    
+    except:
+        return None
+    
+    return packet
 
 
 #Calculate the challenge response
