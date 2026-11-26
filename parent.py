@@ -2,26 +2,39 @@ from microbit import *
 import radio
 import random
 import music
+
+
 =======================
 Connection Radio
 ========================
 radio.on()
 radio.config(group=1)
 
+============================================
+            Variables Menu
+============================================
 options = ["1=OFf", "2=T", "3=H"]  # T = Température, H = Cœur, OFF = Éteint
 index = 0
 allume = False
 en_app = False
 
+
+===================================================
+            Variables Pour envoyer des messages
+===================================================
 radio.on()
 connexion_established = False
 key = "KEYWORD"
+instance_key = None
 connexion_key = None
 nonce_list = set()
 baby_state = 0
 set_volume(100)
 
-# Début mini os Par David
+
+====================================================
+                Fonctions Menu
+====================================================
 
 def allumer_progressif():
     for lum in range(0, 10):
@@ -91,7 +104,12 @@ def retour_menu():
     global en_app
     en_app = False
     afficher_menu()
-    
+
+
+==================================================
+            Code pour la Cripto
+==================================================
+
 def hashing(string):
 	"""
 	Hachage d'une chaîne de caractères fournie en paramètre.
@@ -220,6 +238,14 @@ def unpack_data(encrypted_packet, key):
             (int)length:           Longueur de la donnée en caractères
             (str) message:         Données reçue
     """
+    packet = vignere(encrypted_packet, key, True)
+    packet_split = packet.split("|")
+    
+    typ = packet_split[0]
+    length = packet_split[1]
+    message = packet_split[2]
+    
+    return typ, length, message
 
 def receive_packet(packet_received, key):
     """
@@ -233,6 +259,8 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
+    
+    
 
 #Calculate the challenge response
 def calculate_challenge_response(challenge):
@@ -252,6 +280,11 @@ def respond_to_connexion_request(key):
     :param (str) key:                   Clé de chiffrement
 	:return (srt) challenge_response:   Réponse au challenge
     """
+
+=================================================
+                Code principal
+=================================================
+
 
 def main():
     pass
