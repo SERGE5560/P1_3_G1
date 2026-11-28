@@ -27,6 +27,7 @@ connexion_established = False
 key = "KEYWORD"
 instance_key = None
 connexion_key = None
+nonce_emis = set()
 nonce_list = set()
 baby_state = 0
 set_volume(100)
@@ -203,6 +204,17 @@ def fmt_read(fmt) :
             crt = ""
     return lst
 
+def nouveau_nonce():
+    """
+    
+    """
+    
+    n = str(random.randint(10000, 99999)) 
+    while n in nonce_emis:
+        n = str(random.randint(10000, 99999))
+    nonce_emis.add(n)
+    
+    return n
     
 def send_packet(key, type, content):
     """
@@ -214,25 +226,19 @@ def send_packet(key, type, content):
            (str) content:   Données à envoyer
 	:return none
     """
-    nonce = str(random.randint(100000, 999999))
-    while nonce in nonce_list:
-        nonce = str(random.randint(100000, 999999))
-    nonce_list.add(nonce)
-    
+    nonce = nouveau_nonce()
     
     contentWithNonce = nonce + ":" + str(content)
     lst = [str(type), len(contentWithNonce), contentWithNonce]
     message = fmt_packet(lst)
     
     
-    
-    encrypted_packet = vigenere(content, key)
+    encrypted_packet = vigenere(message, key)
     
     radio.send(encrypted_packet)
     
     
 
-#Unpack the packet, check the validity and return the type, length and content
 def unpack_data(encrypted_packet, key):
     """
     Déballe et déchiffre les paquets reçus via l'interface radio du micro:bit
@@ -251,7 +257,7 @@ def unpack_data(encrypted_packet, key):
     length = packet_split[1]
     message = packet_split[2]
     
-    return typ, length, message
+    return typ, int(length), message
 
 def receive_packet(packet_received, key):
     """
@@ -265,13 +271,16 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
-    data = unpack_data(packet_received, key)
-    content = data[2].split(":")
-    node = content[0]
+
     try:
-        if len(data[2]) == data[1] and node not in nonce_list :
-            nonce_list.add(node)
-            return data
+        data = unpack_data(packet_received, key)
+        content = data[2].split(":")
+        nonce = content[0]
+        
+        
+        if len(data[2]) == data[1] and nonce not in nonce_list :
+            nonce_list.add(nonce)
+            return data[0], data[1], content[1]
         else :
             return None,None,None    
     except:
@@ -291,6 +300,7 @@ def calculate_challenge_response(challenge):
     try:
         random.seed(int(challenge))
         challenge_response = str(random.randint(10000, 99999))
+        random.seed(running_time())
         return challenge_response
     except:
         return ""
@@ -304,6 +314,21 @@ def respond_to_connexion_request(key):
     :param (str) key:                   Clé de chiffrement
 	:return (srt) challenge_response:   Réponse au challenge
     """
+    try:
+        encripted_packet= radio.receive()
+        new_packet = receive_packet(encripted_packet,key)
+        new_packet[2]
+        challenge = new_packet[2]
+    
+        if new_packet[0] == "0x01":
+            challenge_response = calculate_challenge_response(challenge)
+            new_hash = hashing(challenge_response)
+            send_packet(key, "0x01", new_hash)
+            return challenge_response
+    except:
+        return ""
+    
+    return ""
 
 #=================================================
 #                Code principal

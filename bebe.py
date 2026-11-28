@@ -25,6 +25,7 @@ radio.config(group=1)
 connexion_established = False
 key = "KEYWORD"
 connexion_key = None
+nonce_emis = set()
 nonce_list = set()
 baby_state = 0
 set_volume(100)
@@ -306,6 +307,18 @@ def fmt_write(lst) :
     
     return msg
 
+def nouveau_nonce():
+    """
+    
+    """
+    
+    n = str(random.randint(10000, 99999)) 
+    while n in nonce_emis:
+        n = str(random.randint(10000, 99999))
+    nonce_emis.add(n)
+    
+    return n
+
 def send_packet(key, type, content):
     """
     Envoi de données fournies en paramètres
@@ -316,21 +329,19 @@ def send_packet(key, type, content):
            (str) content:   Données à envoyer
 	:return none
     """
-    nonce = str(random.randint(100000, 999999))
-    while nonce in nonce_list:
-        nonce = str(random.randint(100000, 999999))
-    nonce_list.add(nonce)
     
+    nonce = nouveau_nonce()
     
     contentWithNonce = nonce + ":" + str(content)
     lst = [str(type), len(contentWithNonce), contentWithNonce]
     message = fmt_packet(lst)
     
     
-    
-    encrypted_packet = vigenere(content, key)
+    encrypted_packet = vigenere(message, key)
     
     radio.send(encrypted_packet)
+    
+
 
 def unpack_data(encrypted_packet, key):
     """
@@ -350,7 +361,7 @@ def unpack_data(encrypted_packet, key):
     length = packet_split[1]
     message = packet_split[2]
     
-    return typ, length, message
+    return typ, int(length), message
 
 def receive_packet(packet_received, key):
     """
@@ -364,13 +375,14 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
-    data = unpack_data(packet_received, key)
-    content = data[2].split(":")
-    node = content[0]
     try:
+        data = unpack_data(packet_received, key)
+        content = data[2].split(":")
+        node = content[0]
+        
         if len(data[2]) == data[1] and node not in nonce_list :
             nonce_list.add(node)
-            return data
+            return data[0], data[1], content[1]
         else :
             return None,None,None    
     except:
@@ -388,6 +400,7 @@ def calculate_challenge_response(challenge):
     try:
         random.seed(int(challenge))
         challenge_response = str(random.randint(10000, 99999))
+        random.seed(running_time())
         return challenge_response
     except:
         return ""
@@ -405,8 +418,24 @@ def establish_connexion(key):
     """
     challenge = random.randint(10000, 99999)
     typ = "0x01"
-    message = 
-    send_packet(key, typ,  )
+    send_packet(key, typ, challenge)
+    
+    challenge_reponse = calculate_challenge_response(challenge)
+    
+    challenge_reponse_hash = hashing(challenge_reponse)
+    
+    sleep(2000)
+    
+    new_packet = radio.receive()
+    decrypted_packet = receive_packet(new_packet, key)
+    
+    
+    if typ == decrypted_packet[0] and decrypted_packet[2] == challenge_reponse_hash:
+        return challenge_reponse
+    
+    return ""
+
+    
     
     
 
