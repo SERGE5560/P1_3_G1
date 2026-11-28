@@ -11,8 +11,15 @@ ancien_etat = ""
 #=======================
 #Connection Radio
 #========================
+
 radio.on()
 radio.config(group=1)
+
+
+#===================================================
+#            Variables Pour envoyer des messages
+#===================================================
+
 connexion_established = False
 key = "KEYWORD"
 connexion_key = None
@@ -23,7 +30,10 @@ set_volume(100)
 
 ##		MINI OS
 
-#		Variables du menu
+#============================================
+#            Variables Menu
+#============================================
+
 options = ["1=OFf", "2=T", "3=H"]
 index = 0
 allume = False
@@ -263,6 +273,13 @@ def calculate_challenge_response(challenge):
     :param (str) challenge:            Challenge reçu
 	:return (srt)challenge_response:   Réponse au challenge
     """
+    try:
+        random.seed(int(challenge))
+        challenge_response = str(random.randint(10000, 99999))
+        return challenge_response
+    except:
+        return ""
+    
 
 def establish_connexion(key):
     """
