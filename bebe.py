@@ -8,9 +8,9 @@ radio.config(group=1)
 compteur = 0
 ancien_etat = ""
 
-=======================
-Connection Radio
-========================
+#=======================
+#Connection Radio
+#========================
 radio.on()
 radio.config(group=1)
 connexion_established = False
@@ -209,8 +209,8 @@ def fmt_write(lst) :
         msg += str(i) + "|"  
     msg += str(lst[len(lst) - 1])
 
-compteur = 0
-ancien_etat = ""
+    compteur = 0
+    ancien_etat = ""
     
     return msg
 
