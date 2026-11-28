@@ -216,12 +216,13 @@ def send_packet(key, type, content):
     """
     lst =[str(type),len(content), content]
     
-    currentkey = key
-    
     message = fmt_packet(lst)
     
-    radio.send(message)
+    encrypted_packet = vigenere(content, key)
     
+    
+    
+    radio.send(encrypted_packet)
     
     
 
@@ -237,7 +238,7 @@ def unpack_data(encrypted_packet, key):
             (int)length:           Longueur de la donnée en caractères
             (str) message:         Données reçue
     """
-    packet = vignere(encrypted_packet, key, True)
+    packet = vigenere(encrypted_packet, key, True)
     packet_split = packet.split("|")
     
     typ = packet_split[0]
@@ -258,11 +259,17 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
+    data = packet_received
+    content = data[2].split(":")
+    node = content[0]
     try:
-       packet = unpack_data(packet_received, key)
-    
+        if len(data[2]) == data[1] and node not in nonce_list :
+            nonce_list.add(node)
+            packet = unpack_data(packet_received, key)
+        else :
+            return None,None,None    
     except:
-        return None
+        return None,None,None
     
     return packet
 

@@ -1,5 +1,7 @@
 from microbit import *
 import radio
+import random
+import music
 radio.on()
 radio.config(group=1)
 
@@ -183,12 +185,92 @@ def surveiller_bebe(compteur, ancien_etat):
 
 ##		DEDIEE CONNEXION
 
+#==================================================
+#            Code pour la Cripto
+#==================================================
+
+def hashing(string):
+	"""
+	Hachage d'une chaîne de caractères fournie en paramètre.
+	Le résultat est une chaîne de caractères.
+	Attention : cette technique de hachage n'est pas suffisante (hachage dit cryptographique) pour une utilisation en dehors du cours.
+
+	:param (str) string: la chaîne de caractères à hacher
+	:return (str): le résultat du hachage
+	"""
+	def to_32(value):
+		"""
+		Fonction interne utilisée par hashing.
+		Convertit une valeur en un entier signé de 32 bits.
+		Si 'value' est un entier plus grand que 2 ** 31, il sera tronqué.
+
+		:param (int) value: valeur du caractère transformé par la valeur de hachage de cette itération
+		:return (int): entier signé de 32 bits représentant 'value'
+		"""
+		value = value % (2 ** 32)
+		if value >= 2**31:
+			value = value - 2 ** 32
+		value = int(value)
+		return value
+
+	if string:
+		x = ord(string[0]) << 7
+		m = 1000003
+		for c in string:
+			x = to_32((x*m) ^ ord(c))
+		x ^= len(string)
+		if x == -1:
+			x = -2
+		return str(x)
+	return ""
+    
+def vigenere(message, key, decryption=False):
+    text = ""
+    key_length = len(key)
+    key_as_int = [ord(k) for k in key]
+
+    for i, char in enumerate(str(message)):
+        #Letters encryption/decryption
+        if char.isalpha():
+            key_index = i % key_length
+            if decryption:
+                modified_char = chr((ord(char.upper()) - key_as_int[key_index] + 26) % 26 + ord('A'))
+            else : 
+                modified_char = chr((ord(char.upper()) + key_as_int[key_index] - 26) % 26 + ord('A'))
+            #Put back in lower case if it was
+            if char.islower():
+                modified_char = modified_char.lower()
+            text += modified_char
+        #Digits encryption/decryption
+        elif char.isdigit():
+            key_index = i % key_length
+            if decryption:
+                modified_char = str((int(char) - key_as_int[key_index]) % 10)
+            else:  
+                modified_char = str((int(char) + key_as_int[key_index]) % 10)
+            text += modified_char
+        else:
+            text += char
+    return text
+
 def formatting(T,V):
     """
     pre: fonction format
     post: fonction lire le type et retourner le message
     """
     return str(T) + "|" + str(len(str(V))) + "|" + str(V)
+
+def fmt_packet(lst) :
+    """
+        pre : prend en paramètre la liste 'lst'.
+        post : Reconstruit le message sous le format de base.
+    """
+    msg = ""
+    for i in range(len(lst)-1) :
+        msg += str(lst[i]) + "|"  
+    msg += str(lst[len(lst) - 1])
+    
+    return msg
 
 
 def fmt_read(fmt) :
@@ -224,6 +306,26 @@ def fmt_write(lst) :
     
     return msg
 
+def send_packet(key, type, content):
+    """
+    Envoi de données fournies en paramètres
+    Cette fonction permet de construire, de chiffrer puis d'envoyer un paquet via l'interface radio du micro:bit
+
+    :param (str) key:       Clé de chiffrement
+           (str) type:      Type du paquet à envoyer
+           (str) content:   Données à envoyer
+	:return none
+    """
+    lst =[str(type),len(content), content]
+    
+    message = fmt_packet(lst)
+    
+    encrypted_packet = vigenere(content, key)
+    
+    
+    
+    radio.send(encrypted_packet)
+
 def unpack_data(encrypted_packet, key):
     """
     Déballe et déchiffre les paquets reçus via l'interface radio du micro:bit
@@ -235,7 +337,7 @@ def unpack_data(encrypted_packet, key):
             (int)length:           Longueur de la donnée en caractères
             (str) message:         Données reçue
     """
-    packet = vignere(encrypted_packet, key, True)
+    packet = vigenere(encrypted_packet, key, True)
     packet_split = packet.split("|")
     
     typ = packet_split[0]
@@ -281,6 +383,8 @@ def calculate_challenge_response(challenge):
         return ""
     
 
+
+
 def establish_connexion(key):
     """
     Etablissement de la connexion avec l'autre micro:bit
@@ -289,6 +393,9 @@ def establish_connexion(key):
     :param (str) key:                  Clé de chiffrement
 	:return (srt)challenge_response:   Réponse au challenge
     """
+    challenge = random.randint()
+    type = "0x01"
+    
 
 
 
