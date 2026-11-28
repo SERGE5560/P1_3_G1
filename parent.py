@@ -49,7 +49,7 @@ def eteindre_progressif():
         display.show(Image(":".join([ligne] * 5)))
         sleep(80)
     display.clear()
-
+    
 
 def allumer():
     global allume, index, en_app
@@ -214,13 +214,19 @@ def send_packet(key, type, content):
            (str) content:   Données à envoyer
 	:return none
     """
-    lst =[str(type),len(content), content]
+    nonce = str(random.randint(100000, 999999))
+    while nonce in nonce_list:
+        nonce = str(random.randint(100000, 999999))
+    nonce_list.add(nonce)
     
+    
+    contentWithNonce = nonce + ":" + str(content)
+    lst = [str(type), len(contentWithNonce), contentWithNonce]
     message = fmt_packet(lst)
     
+    
+    
     encrypted_packet = vigenere(content, key)
-    
-    
     
     radio.send(encrypted_packet)
     
@@ -259,19 +265,19 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
-    data = packet_received
+    data = unpack_data(packet_received, key)
     content = data[2].split(":")
     node = content[0]
     try:
         if len(data[2]) == data[1] and node not in nonce_list :
             nonce_list.add(node)
-            packet = unpack_data(packet_received, key)
+            return data
         else :
             return None,None,None    
     except:
         return None,None,None
     
-    return packet
+    
 
 #Calculate the challenge response
 def calculate_challenge_response(challenge):
@@ -305,6 +311,10 @@ def respond_to_connexion_request(key):
 
 
 def main():
+    
+    
+    
+    
     pass
 
 # Démarre éteint (en attente d'un appui sur A) 

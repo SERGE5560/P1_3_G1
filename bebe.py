@@ -316,13 +316,19 @@ def send_packet(key, type, content):
            (str) content:   Données à envoyer
 	:return none
     """
-    lst =[str(type),len(content), content]
+    nonce = str(random.randint(100000, 999999))
+    while nonce in nonce_list:
+        nonce = str(random.randint(100000, 999999))
+    nonce_list.add(nonce)
     
+    
+    contentWithNonce = nonce + ":" + str(content)
+    lst = [str(type), len(contentWithNonce), contentWithNonce]
     message = fmt_packet(lst)
     
+    
+    
     encrypted_packet = vigenere(content, key)
-    
-    
     
     radio.send(encrypted_packet)
 
@@ -358,13 +364,17 @@ def receive_packet(packet_received, key):
             (int)lenght:           Longueur de la donnée en caractère
             (str) message:         Données reçue
     """
+    data = unpack_data(packet_received, key)
+    content = data[2].split(":")
+    node = content[0]
     try:
-       packet = unpack_data(packet_received, key)
-    
+        if len(data[2]) == data[1] and node not in nonce_list :
+            nonce_list.add(node)
+            return data
+        else :
+            return None,None,None    
     except:
-        return None
-    
-    return packet
+        return None,None,None
 
 
 #Calculate the challenge response
@@ -393,11 +403,22 @@ def establish_connexion(key):
     :param (str) key:                  Clé de chiffrement
 	:return (srt)challenge_response:   Réponse au challenge
     """
-    challenge = random.randint()
-    type = "0x01"
+    challenge = random.randint(10000, 99999)
+    typ = "0x01"
+    message = 
+    send_packet(key, typ,  )
+    
     
 
-
+def main():
+    
+    challenge_response = establish_connexion(key)
+    
+    
+    
+    
+    
+    pass
 
 
 
